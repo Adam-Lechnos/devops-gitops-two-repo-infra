@@ -8,7 +8,7 @@ namespace: dev
 
 images:
 - name: ghcr.io/adam-lechnos/devops-gitops-two-repo-src
-  newTag: sha-66563b2
+  newTag: sha-0982623
 
 # 1. Generate the ConfigMap automatically with a content hash suffix
 configMapGenerator:

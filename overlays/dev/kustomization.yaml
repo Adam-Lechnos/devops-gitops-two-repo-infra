@@ -7,7 +7,7 @@ resources:
 namespace: dev
 
 images:
-- name: ghcr.io/adam-lechnos/python_app_learn
+- name: ghcr.io/adam-lechnos/devops-gitops-two-repo-src
   newTag: latest
 
 # 1. Generate the ConfigMap automatically with a content hash suffix

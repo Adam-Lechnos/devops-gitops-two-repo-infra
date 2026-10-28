@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: python-app
-        image: ghcr.io/adam-lechnos/python_app_learn:latest
+        image: ghcr.io/adam-lechnos/devops-gitops-two-repo-src:latest
         ports:
         - containerPort: 5000

@@ -7,8 +7,8 @@ resources:
 namespace: qa
 
 images:
-- name: ghcr.io/adam-lechnos/python_app_learn
-  newName: ghcr.io/adam-lechnos/python_app_learn
+- name: ghcr.io/adam-lechnos/devops-gitops-two-repo-src
+  newName: ghcr.io/adam-lechnos/devops-gitops-two-repo-src
   newTag: 1.5.1
 
 # Example: Increase replicas in QA without touching the base deployment file

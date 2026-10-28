@@ -26,7 +26,7 @@ jobs:
       - name: Update Prod Kustomization Image Tag
         run: |
           cd k8s/overlays/prod
-          kustomize edit set image ghcr.io/adam-lechnos/python_app_learn=ghcr.io/adam-lechnos/python_app_learn:${{ inputs.version }}
+          kustomize edit set image ghcr.io/adam-lechnos/devops-gitops-two-repo-src=ghcr.io/adam-lechnos/devops-gitops-two-repo-src:${{ inputs.version }}
 
       - name: Create Pull Request to Promote to Production
         uses: peter-evans/create-pull-request@v8

@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../base
+
+namespace: qa
+
+images:
+- name: ghcr.io/adam-lechnos/python_app_learn
+  newName: ghcr.io/adam-lechnos/python_app_learn
+  newTag: 1.5.1
+
+# Example: Increase replicas in QA without touching the base deployment file
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/replicas
+      value: 2
+  target:
+    kind: Deployment
+    name: python-app

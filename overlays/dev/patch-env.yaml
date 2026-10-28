@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-app
+spec:
+  template:
+    spec:
+      containers:
+      - name: python-app
+        envFrom:
+        - configMapRef:
+            name: app-env-config # Automatically loads all literals as environment variables!

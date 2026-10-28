@@ -8,7 +8,7 @@ namespace: qa
 
 images:
 - name: ghcr.io/adam-lechnos/devops-gitops-two-repo-src
-  newTag: 1.0.0
+  newTag: v.1.0.0
 
 # Example: Increase replicas in QA without touching the base deployment file
 patches:

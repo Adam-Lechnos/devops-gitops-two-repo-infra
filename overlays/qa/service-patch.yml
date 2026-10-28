@@ -1,0 +1,11 @@
+# overlays/dev/service-port-patch.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-service
+spec:
+  ports:
+  - name: tcp # Highly recommended to name ports when patching
+    port: 5051 # Changing public port from 80 to 8080
+    targetPort: 5000 # Keeping target port the same
+    nodePort: 30081 # A static external port on your local cluster (optional, 30000-32767)

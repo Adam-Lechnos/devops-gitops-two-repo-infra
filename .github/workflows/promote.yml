@@ -1,0 +1,66 @@
+name: Promote Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: 'Target Environment'
+        required: true
+        type: choice
+        options:
+          - qa
+          - prod
+      image_tag:
+        description: 'Image Tag / SemVer to promote (e.g., v1.0.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-promotion-pr:
+    name: Create Promotion PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Infra Repository
+        uses: actions/checkout@v4
+
+      - name: Create Promotion Branch & Update Overlay
+        run: |
+          TARGET_ENV="${{ github.event.inputs.target_env }}"
+          TAG="${{ github.event.inputs.image_tag }}"
+          BRANCH_NAME="promote/${TARGET_ENV}-${TAG}"
+
+          echo "Target Environment: ${TARGET_ENV}"
+          echo "Image Tag: ${TAG}"
+          echo "Branch Name: ${BRANCH_NAME}"
+
+          # Switch to a new branch for this promotion
+          git checkout -b "${BRANCH_NAME}"
+
+          # Navigate to target environment overlay and update tag
+          cd overlays/${TARGET_ENV}
+          sed -i "s/newTag:.*/newTag: ${TAG}/g" kustomization.yaml
+
+          # Configure bot identity and commit
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add kustomization.yaml
+          git commit -m "chore(${TARGET_ENV}): promote image tag to ${TAG}"
+          git push origin "${BRANCH_NAME}" --force
+
+      - name: Open Pull Request via GitHub CLI
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TARGET_ENV="${{ github.event.inputs.target_env }}"
+          TAG="${{ github.event.inputs.image_tag }}"
+          BRANCH_NAME="promote/${TARGET_ENV}-${TAG}"
+
+          gh pr create \
+            --base main \
+            --head "${BRANCH_NAME}" \
+            --title "🚀 Promote ${TAG} to ${TARGET_ENV^^}" \
+            --body "Automated promotion request triggered via GitHub Actions workflow dispatch. Updates \`overlays/${TARGET_ENV}/kustomization.yaml\` tag to \`${TAG}\`."

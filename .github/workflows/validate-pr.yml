@@ -1,0 +1,46 @@
+name: GitOps PR Validation
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  kustomize-kubeconform-check:
+    name: Validate Manifests & Schemas
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Kustomize & Kubeconform
+        run: |
+          # Install Kustomize
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+
+          # Install Kubeconform
+          KUBECONFORM_VERSION="v0.6.4"
+          curl -sL "https://github.com/yannh/kubeconform/releases/download/${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz" | tar xz
+          sudo mv kubeconform /usr/local/bin/
+
+      - name: Validate All Overlays (Dev, QA, Prod)
+        run: |
+          set -e
+          ENVIRONMENTS=("dev" "qa" "prod")
+          
+          for env in "${ENVIRONMENTS[@]}"; do
+            echo "=========================================="
+            echo "🔍 Validating overlay: ${env}"
+            echo "=========================================="
+            
+            # Build the manifests using Kustomize and pipe to Kubeconform
+            kustomize build overlays/${env} | kubeconform \
+              -strict \
+              -summary \
+              -output text \
+              -kubernetes-version 1.28.0 \
+              -ignore-missing-schemas
+              
+            echo "✅ Overlay '${env}' passed validation!"
+            echo ""
+          done

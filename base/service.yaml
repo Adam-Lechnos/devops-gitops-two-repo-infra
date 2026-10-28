@@ -10,4 +10,3 @@ spec:
   - protocol: TCP
     port: 5000 # The port the service listens on inside the cluster
     targetPort: 5000 # The port your container app is actually running on
-    nodePort: 30080 # A static external port on your local cluster (optional, 30000-32767)

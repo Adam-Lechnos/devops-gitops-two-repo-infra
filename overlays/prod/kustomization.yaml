@@ -9,7 +9,7 @@ namespace: prod
 images:
 - name: ghcr.io/adam-lechnos/devops-gitops-two-repo-src
   newName: ghcr.io/adam-lechnos/devops-gitops-two-repo-src
-  newTag: "1.20"
+  newTag: v1.0.0
 
 patches:
 - patch: |-

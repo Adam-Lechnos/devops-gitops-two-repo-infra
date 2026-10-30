@@ -25,3 +25,41 @@ Designed around strict enterprise compliance standards (NIST / State IT governan
     ├── dev/                # Automated environment (Tracks latest Git SHA via CI)
     ├── qa/                 # Gated pre-production testing environment
     └── prod/               # Stable production environment (SemVer pinned)
+
+```
+
+## 🏗️ Architectural Overview
+
+```mermaid
+flowchart LR
+    subgraph Trigger ["Automation Source"]
+        PAT["GitHub Actions src repo - Fine-Grained PAT"]
+    end
+
+    subgraph Infra_Repo ["devops-gitops-two-repo-infra"]
+        subgraph Structure ["Directory Layout"]
+            BASE["/base - deployment and service yaml"]
+            DEV["/overlays/dev - kustomization yaml"]
+            PROD["/overlays/prod - kustomization yaml"]
+        end
+    end
+
+    subgraph Cluster ["Target Kubernetes Cluster"]
+        GITOPS_ENGINE["GitOps Operator - ArgoCD or Flux"]
+        
+        subgraph K8s_Resources ["K8s Active Workloads"]
+            ING["Ingress Controller or ALB"]
+            SVC["Kubernetes Service"]
+            PODS["Flask Application Pods"]
+        end
+    end
+
+    PAT --> DEV
+    BASE <--- DEV
+    BASE <--- PROD
+
+    DEV --> GITOPS_ENGINE
+    GITOPS_ENGINE --> ING
+    ING --> SVC
+    SVC --> PODS
+```
